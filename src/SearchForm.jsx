@@ -33,6 +33,7 @@ let Link = styled.a({
 });
 
 export function SearchForm(props) {
+  const APP_URL = "https://netapp-server-doriroz.herokuapp.com/api/";
   const [foundUsers, setFoundUsers] = useState([]);
 
   function onChangeUser(e) {
@@ -40,8 +41,7 @@ export function SearchForm(props) {
   }
 
   function get(route) {
-    console.log("http://localhost:8080/api/" + route);
-    return fetch("http://localhost:8080/api/" + route, {
+    return fetch(APP_URL + route, {
       credentials: "include",
       mode: "cors",
     }).then((response) => response.json());

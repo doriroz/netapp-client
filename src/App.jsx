@@ -6,8 +6,9 @@ import { Chats } from "./Chats.jsx";
 import { Messages } from "./Messages.jsx";
 import { MessageForm } from "./MessageForm.jsx";
 import { SearchForm } from "./SearchForm.jsx";
-import { SearchResult } from "./SearchResult";
 import { Panels, Panel } from "./Panels.jsx";
+
+const APP_URL = "https://netapp-server-doriroz.herokuapp.com/api/";
 
 export function App() {
   //my user
@@ -53,13 +54,12 @@ export function App() {
   //lastPoll => everytime we send request to the server
   useEffect(loadMessage, [chatId, lastPoll]);
 
-  // useEffect(startTimer, [lastPoll]);
+  useEffect(startTimer, [lastPoll]);
 
   //get route
   function get(route) {
-    console.log("route");
-    console.log("http://localhost:8080/api/" + route);
-    return fetch("http://localhost:8080/api/" + route).then((response) =>
+    // return fetch("http://localhost:8080/api/" + route).then((response) =>
+    return fetch(APP_URL + route).then((response) =>
       response.json()
     );
   }
@@ -71,7 +71,8 @@ export function App() {
 
   //post route
   function post(route, msg) {
-    return fetch("http://localhost:8080/api/" + route, {
+    // return fetch("http://localhost:8080/api/" + route, {
+    return fetch(APP_URL + route, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -126,7 +127,8 @@ export function App() {
     //when using fetch => return what the object include (the content object)
     //so in order to use the object , we use then(myUser)
     // fetch("http://localhost:8080/api/users/" + myUserID)
-    fetch("http://localhost:8080/api/me", {
+    // fetch("http://localhost:8080/api/me", {
+    fetch(APP_URL + "me/", {  
       credentials: "include",
       mode: "cors",
     })
@@ -138,16 +140,15 @@ export function App() {
   }
 
   function loadMyFriends() {
-    // console.log("Dori user : " + myUser);
-    fetch("http://localhost:8080/api/users/")
-      // fetch("http://localhost:8080/api/friends/" + myUserID)
+    // fetch("http://localhost:8080/api/users/")
+    fetch(APP_URL+"users/")
       .then((response) => response.json())
       .then((mf) => {
         let friends = mf.filter((friend) => friend._id !== myUser);
         console.log(friends);
         setMyFriends(friends);
       })
-      .catch((err) => console.log("dddddddddddd: " + err));
+      .catch((err) => console.log("Error : " + err));
   }
 
   function startTimer() {
