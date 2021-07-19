@@ -27,6 +27,7 @@ export function MessageForm({ onNewMassege }) {
     console.log(e.target);
     alert("sending message to server: " + e.target.newMessage.value);
     onNewMassege(e.target.newMessage.value);
+    e.target.newMessage.value = "";
   }
 
   return (

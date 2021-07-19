@@ -14,10 +14,9 @@ const SearchList = styled.div(() => ({
 }));
 
 const Image = styled.img(() => ({
-  height: "30px",
-  width: "30px",
+  height: "35px",
+  width: "35px",
   padding: "0 10px",
-  borderRadius: "50%",
   margin: "0",
 }));
 
@@ -28,7 +27,6 @@ const Body = styled.div((props) => ({
   backgroundSize: "150px 250px",
   backgroundColor: props.backgroundColor,
   backgroundImage: props.backgroundImage,
-  // padding: "0 10px",
   //   ...props,
   //spread props does not doing well with user-defined parameter name
   //that does not known as css property
@@ -69,12 +67,27 @@ export function Panel(props) {
     ref.current.scrollTo(0, ref.current.scrollHeight);
   }, [lastScroll]);
 
+  // props.myUser
   console.log(props.myUser);
   return (
     <Container width={width}>
       <Header>
-        <Image src={props.myUser} alt="" />
-        {header}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <Image
+            src={props.headerPic}
+            alt=""
+            style={{
+              borderRadius: props.headerPic != "chats.png" ? "50%" : "none",
+            }}
+          />
+          {header}
+        </div>
       </Header>
       <Body {...props} ref={ref}>
         <Search>{props.search}</Search>

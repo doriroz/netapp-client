@@ -9,8 +9,10 @@ let ListStyle = styled.ul({
 
 let ItemStyled = styled.li({
   padding: "10px 5px 10px 5px",
-  border: "1px solid gray",
+  border: "1px solid #f4f2f2",
   cursor: "pointer",
+  fontSize:"18px",
+  // verticalAlign:"middle"
 });
 
 const ImgSearch = styled.img(() => ({
@@ -36,8 +38,11 @@ export function Chats(props) {
     <ListStyle>
       {props.chats.map((c) => (
         <ItemStyled key={c._id} onClick={() => props.onSelectChat(c._id)}>
+          <div style={{display:"flex",flexDirection:"row",alignItems:"center"}}>
           <ImgSearch src="users.png" />
           {joinUser(c, props.userContext.allUser)}
+          </div>
+          
         </ItemStyled>
       ))}
     </ListStyle>

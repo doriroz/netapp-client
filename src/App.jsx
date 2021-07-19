@@ -19,6 +19,8 @@ export function App() {
   const [chats, setChats] = useState([]);
   //chatID
   const [chatId, setChatId] = useState(null);
+  //newChatId
+  const [newChatId, setNewChatId] = useState(null);
   //messages
   const [messages, setMessages] = useState([]);
   //lastPoll hold the current time
@@ -31,7 +33,7 @@ export function App() {
   //the value of ref is inside the current
   let timer = useRef(null);
 
-  let lastChatId = useRef(null);
+  let savedChatId = useRef(null);
 
   //my user - holding my user id as a global parameter
   // let myUserID = "60c2523497fb4f41c011ad1b";
@@ -47,21 +49,23 @@ export function App() {
   useEffect(updateUserContext, [myFriends, myUser]);
 
   //useEffect triggers every re-render
-  useEffect(loadChats, [myUser?._id]);
+  useEffect(loadChats, [myUser?._id, newChatId, lastPoll]);
 
   //or chatId or lastPoll changes and trigger the useEffect
   //chatId => everytime we selecting chat from chats list
   //lastPoll => everytime we send request to the server
   useEffect(loadMessage, [chatId, lastPoll]);
 
+  //when chatId is change, want to trigger
+  //savedLastChatid function that save the chat id
+  useEffect(savedLastChatid, [chatId]);
+
   useEffect(startTimer, [lastPoll]);
 
   //get route
   function get(route) {
     // return fetch("http://localhost:8080/api/" + route).then((response) =>
-    return fetch(APP_URL + route).then((response) =>
-      response.json()
-    );
+    return fetch(APP_URL + route).then((response) => response.json());
   }
 
   // let get = (route) =>
@@ -104,10 +108,16 @@ export function App() {
       // get("chats/").then((chats) => {
       console.log(chats);
       setChats(chats);
-      // if (!chats) return;
-      // let defaultChat = lastChatId.current || chats[0]._id;
-      // setChatId(defaultChat);
-      setChatId(chats[0]._id);
+      if (!chats) return;
+      //except of the first time that chats[0]._id is null
+      //** chats[0]._id will always have value after the first time
+      //** but || statemant will search the value on the first opherand
+      //** only if it doesn't has any value it search on the second ophrand
+      //after setChatId will change the chatId render the component
+      //changing chatId will trigger saveLastChatId
+
+      let defaultChat = savedChatId.current || chats[0]._id;
+      setChatId(defaultChat);
     });
   }
 
@@ -128,20 +138,19 @@ export function App() {
     //so in order to use the object , we use then(myUser)
     // fetch("http://localhost:8080/api/users/" + myUserID)
     // fetch("http://localhost:8080/api/me", {
-    fetch(APP_URL + "me/", {  
+    fetch(APP_URL + "me/", {
       credentials: "include",
       mode: "cors",
     })
       .then((response) => response.json())
       .then((myUser) => {
-        console.log("Dori user : " + myUser._id);
         setMyUser(myUser);
       });
   }
 
   function loadMyFriends() {
     // fetch("http://localhost:8080/api/users/")
-    fetch(APP_URL+"users/")
+    fetch(APP_URL + "users/")
       .then((response) => response.json())
       .then((mf) => {
         let friends = mf.filter((friend) => friend._id !== myUser);
@@ -156,6 +165,10 @@ export function App() {
     timer.current = setTimeout(() => {
       setLastPoll(Date.now());
     }, 5000);
+  }
+
+  function savedLastChatid() {
+    savedChatId.current = chatId;
   }
 
   //find the selected chat using selectedID => find method
@@ -189,11 +202,13 @@ export function App() {
     });
   }
 
-  // function onClickFoundUsr(foundUser) {
-  //   post("chats/", chats.userIds[(myUser._id, foundUser)]).then((newChat) => {
-  //     setNewChatId(newChat._id);
-  //   });
-  // }
+  function onClickFoundUsr(foundUser) {
+    console.log(foundUser);
+    console.log(myUser._id);
+    post("chats/", { userIds: [(myUser._id, foundUser)] }).then((newChat) => {
+      setNewChatId(newChat._id);
+    });
+  }
 
   //create context of all users
   function updateUserContext() {
@@ -218,12 +233,12 @@ export function App() {
     <Panels>
       <Panel
         width={"35%"}
-        myUser={myUser.profilePic}
+        headerPic={myUser.profilePic}
         header={"User: " + myUser.userName}
         // header={"User: " + myUser.userName + " || Timing Delay: " + lastPoll}
         body={
           <div>
-            <SearchForm userContext={userContext} />
+            <SearchForm userContext={userContext} foundUser={onClickFoundUsr} />
             <p style={{ padding: "0 10px" }}>Chats:</p>
             <Chats
               chats={chats}
@@ -238,11 +253,11 @@ export function App() {
       <Panel
         width={"65%"}
         backgroundImage={backgroundImage}
+        headerPic={"chats.png"}
         header={
-          "ChatId: " +
-          selectedChat?._id +
-          " || Friend on chat:  " +
-          getUserByChat(selectedChat)
+          // "ChatId: " +
+          // selectedChat?._id +
+          "Friend on chat:  " + getUserByChat(selectedChat)
           // selectedChat?.userIds.filter((user) => user.userName).join(",")
         }
         //we pass allUser context to message in order to see all
@@ -257,7 +272,7 @@ export function App() {
         footer={<MessageForm onNewMassege={onNewMassege} />}
         // lastScroll is passing the lastPoll to the pane
         // lastPoll is changed when sending call to the server for messages
-        // when sending call to server the lastPoll is chnged and the pane will scroll the scrollbar down to the new message
+        // when sending call to server the lastPoll is chnged and the pane /// will scroll the scrollbar down to the new message
 
         lastScroll={lastPoll}
       />
