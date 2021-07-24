@@ -100,7 +100,7 @@ export function App() {
     //when using fetch => return what the object include (the content object)
     //so in order to use the object , we use then(myUser)
     // Utils.get("me", {
-    fetch("https://netapp-server-doriroz.herokuapp.com/api/", {
+    fetch("https://netapp-server-doriroz.herokuapp.com/api/me", {
       // fetch("http://localhost:8080/api/me", {
       credentials: "include",
       mode: "cors",
