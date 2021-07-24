@@ -83,7 +83,7 @@ export function Panel(props) {
             src={props.headerPic}
             alt=""
             style={{
-              borderRadius: props.headerPic != "chats.png" ? "50%" : "none",
+              borderRadius: props.headerPic !== "chats.png" ? "50%" : "none",
             }}
           />
           {header}

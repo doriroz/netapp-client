@@ -7,8 +7,7 @@ import { Messages } from "./Messages.jsx";
 import { MessageForm } from "./MessageForm.jsx";
 import { SearchForm } from "./SearchForm.jsx";
 import { Panels, Panel } from "./Panels.jsx";
-
-const APP_URL = "https://netapp-server-doriroz.herokuapp.com/api/";
+const Utils = require("./utils.js");
 
 export function App() {
   //my user
@@ -62,60 +61,24 @@ export function App() {
 
   useEffect(startTimer, [lastPoll]);
 
-  //get route
-  function get(route) {
-    // return fetch("http://localhost:8080/api/" + route).then((response) =>
-    return fetch(APP_URL + route).then((response) => response.json());
-  }
-
-  // let get = (route) =>
-  //   fetch("http://localhost:8080/api/" + route).then((response) =>
-  //     response.json()
-  //   );
-
-  //post route
-  function post(route, msg) {
-    // return fetch("http://localhost:8080/api/" + route, {
-    return fetch(APP_URL + route, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(msg),
-    });
-  }
-
-  // let post = (route, body) =>
-  //   fetch(`http://localhost:8080/api/${route}`, {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(body),
-  //   });
-
   function loadAllUsers() {
-    get("users/")
+    Utils.get("users/")
       .then((users) => console.log(users))
       .catch((err) => console.log("There is an internal error: " + err));
   }
 
   function loadChats() {
     if (!myUser._id) return;
-    get("chats?userid=" + myUser._id).then((chats) => {
-      // get("chats/").then((chats) => {
-      console.log(chats);
+    Utils.get("chats?userid=" + myUser._id).then((chats) => {
       setChats(chats);
       if (!chats) return;
+
       //except of the first time that chats[0]._id is null
       //** chats[0]._id will always have value after the first time
       //** but || statemant will search the value on the first opherand
       //** only if it doesn't has any value it search on the second ophrand
       //after setChatId will change the chatId render the component
       //changing chatId will trigger saveLastChatId
-
       let defaultChat = savedChatId.current || chats[0]._id;
       setChatId(defaultChat);
     });
@@ -123,7 +86,7 @@ export function App() {
 
   function loadMessage() {
     if (!chatId) return;
-    get("chats/" + chatId + "/messages/").then((messages) => {
+    Utils.get("chats/" + chatId + "/messages/").then((messages) => {
       console.log(messages);
       setMessages(messages);
     });
@@ -136,9 +99,9 @@ export function App() {
     //so in order to use the object , we use then({myUser})
     //when using fetch => return what the object include (the content object)
     //so in order to use the object , we use then(myUser)
-    // fetch("http://localhost:8080/api/users/" + myUserID)
-    // fetch("http://localhost:8080/api/me", {
-    fetch(APP_URL + "me/", {
+    // Utils.get("me", {
+    fetch("https://netapp-server-doriroz.herokuapp.com/api/", {
+      // fetch("http://localhost:8080/api/me", {
       credentials: "include",
       mode: "cors",
     })
@@ -149,9 +112,7 @@ export function App() {
   }
 
   function loadMyFriends() {
-    // fetch("http://localhost:8080/api/users/")
-    fetch(APP_URL + "users/")
-      .then((response) => response.json())
+    Utils.get("users")
       .then((mf) => {
         let friends = mf.filter((friend) => friend._id !== myUser);
         console.log(friends);
@@ -196,18 +157,18 @@ export function App() {
       date: Date.now(),
     };
 
-    post("chats/" + chatId + "/messages/", msg).then((data) => {
+    Utils.post("chats/" + chatId + "/messages/", msg).then((data) => {
       console.log(JSON.stringify(data));
       setLastPoll(Date.now());
     });
   }
 
   function onClickFoundUsr(foundUser) {
-    console.log(foundUser);
-    console.log(myUser._id);
-    post("chats/", { userIds: [(myUser._id, foundUser)] }).then((newChat) => {
-      setNewChatId(newChat._id);
-    });
+    Utils.post("chats/", { userIds: [(myUser._id, foundUser)] }).then(
+      (newChat) => {
+        setNewChatId(newChat._id);
+      }
+    );
   }
 
   //create context of all users
@@ -245,6 +206,7 @@ export function App() {
               onSelectChat={setChatId}
               userContext={userContext}
               myUser={myUser}
+              savedChat={savedChatId}
             />
           </div>
         }
@@ -255,8 +217,6 @@ export function App() {
         backgroundImage={backgroundImage}
         headerPic={"chats.png"}
         header={
-          // "ChatId: " +
-          // selectedChat?._id +
           "Friend on chat:  " + getUserByChat(selectedChat)
           // selectedChat?.userIds.filter((user) => user.userName).join(",")
         }

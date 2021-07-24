@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Moment from "react-moment";
 
 const Message = styled.div({
   borderRadius: "15px",
@@ -9,17 +10,13 @@ const Message = styled.div({
   // margin: "10px 5px 10px auto",
 });
 
+// moment("12-25-1995", "MM-DD-YYYY");
+
 export function Messages(props) {
   if (!props.messages) {
     console.log(props.messages);
     return "";
   }
-  // console.log(props);
-  // props.messages.map((message) => console.log(message.author.firstName));
-  // console.log(props.messages);
-
-  // let fullUser = props.userContext.allUser;
-  // console.log("Full user array : " + fullUser);
 
   return (
     <div>
@@ -42,7 +39,8 @@ export function Messages(props) {
             }}
           >
             <p>
-              Name: {fullUser?.userName} || Meassage ID: {message._id}
+              Name: {fullUser?.userName} || Date:{" "}
+              <Moment format="DD/MM/YYYY">{message.date}</Moment>
             </p>
             <p>{message.context}</p>
           </Message>

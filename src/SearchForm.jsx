@@ -49,13 +49,16 @@ export function SearchForm(props) {
   }
 
   function getUserBySearch(e) {
+    if (!e.target.value) {
+      setFoundUsers([]);
+      return;
+    }
+
     return get("users?search=" + e.target.value).then((user) => {
       console.log(user);
       setFoundUsers(user);
     });
   }
-
-  
 
   return (
     <div>
@@ -73,12 +76,15 @@ export function SearchForm(props) {
           console.log(usr);
           return (
             <li key={usr._id}>
-              <Link href="#" 
-              data-user-id={usr._id}
-              onClick={(e)=>{
-                props.foundUser(e.target.dataset.userId)}
-                }
-              >{usr.userName + " || "}</Link>
+              <Link
+                href="#"
+                data-user-id={usr._id}
+                onClick={(e) => {
+                  props.foundUser(e.target.dataset.userId);
+                }}
+              >
+                {usr.userName + " || "}
+              </Link>
             </li>
           );
         })}

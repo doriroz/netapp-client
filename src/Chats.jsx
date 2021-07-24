@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import { useState } from "react";
+const Utils = require("./utils.js");
 
 let ListStyle = styled.ul({
   listStyle: "none",
@@ -11,8 +13,15 @@ let ItemStyled = styled.li({
   padding: "10px 5px 10px 5px",
   border: "1px solid #f4f2f2",
   cursor: "pointer",
-  fontSize:"18px",
-  // verticalAlign:"middle"
+  fontSize: "18px",
+});
+
+const Button = styled.button({
+  fontSize: "20px",
+  outline: "none",
+  border: "none",
+  margin: "0 1rem",
+  borderRadius: "50%",
 });
 
 const ImgSearch = styled.img(() => ({
@@ -33,18 +42,35 @@ function joinUser(c, allUser) {
 }
 
 export function Chats(props) {
+  function onClickHandler(chatId) {
+    Utils.remove("chats/" + chatId);
+    props.savedChat.current = null;
+  }
+
   props.chats.map((c) => console.log(c.userIds.userName));
   return (
     <ListStyle>
       {props.chats.map((c) => (
         <ItemStyled key={c._id} onClick={() => props.onSelectChat(c._id)}>
-          <div style={{display:"flex",flexDirection:"row",alignItems:"center"}}>
-          <ImgSearch src="users.png" />
-          {joinUser(c, props.userContext.allUser)}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <ImgSearch src="users.png" />
+            {joinUser(c, props.userContext.allUser)}
+            {/* Using an arrow function in render creates a new function each time the component renders
+            It is often the easiest way to pass parameters to callback */}
+            <Button onClick={() => onClickHandler(c._id)}>&times;</Button>
           </div>
-          
         </ItemStyled>
       ))}
     </ListStyle>
   );
+}
+
+{
+  /* <button onclick='onClickEvent(event)'>&times</button> */
 }
