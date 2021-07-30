@@ -41,6 +41,8 @@ export function App() {
 
   useEffect(loadAllUsers, []);
 
+  // useEffect(loadAllUsers, [newUser]);
+
   useEffect(loadMyFriends, [myUser]);
 
   //when myFriends or myUser is change, want to trigger
@@ -100,8 +102,8 @@ export function App() {
     //when using fetch => return what the object include (the content object)
     //so in order to use the object , we use then(myUser)
     // Utils.get("me", {
-    fetch("https://netapp-server-doriroz.herokuapp.com/api/me", {
-      // fetch("http://localhost:8080/api/me", {
+    // fetch("https://netapp-server-doriroz.herokuapp.com/api/me", {
+    fetch("http://localhost:8080/api/me", {
       credentials: "include",
       mode: "cors",
     })
@@ -196,7 +198,7 @@ export function App() {
         width={"35%"}
         headerPic={myUser.profilePic}
         header={"User: " + myUser.userName}
-        // header={"User: " + myUser.userName + " || Timing Delay: " + lastPoll}
+        newUserPic={""}
         body={
           <div>
             <SearchForm userContext={userContext} foundUser={onClickFoundUsr} />
@@ -216,6 +218,7 @@ export function App() {
         width={"65%"}
         backgroundImage={backgroundImage}
         headerPic={"chats.png"}
+        newUserPic={"add-user.png"}
         header={
           "Friend on chat:  " + getUserByChat(selectedChat)
           // selectedChat?.userIds.filter((user) => user.userName).join(",")

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
+import { AddUser } from "./AddUser.jsx";
 
 const Footer = styled.div(() => ({
   // border: "1px solid",
@@ -22,7 +23,10 @@ const Image = styled.img(() => ({
 
 const Body = styled.div((props) => ({
   overflow: "auto",
-  minHeight: "82vh",
+  // the height is determined by the content of the body
+  // in the message content the messages number in the body
+  // is what sets the height
+  minHeight: "75.5vh",
   backgroundPosition: "center",
   backgroundSize: "150px 250px",
   backgroundColor: props.backgroundColor,
@@ -86,7 +90,19 @@ export function Panel(props) {
               borderRadius: props.headerPic !== "chats.png" ? "50%" : "none",
             }}
           />
-          {header}
+          <div
+            style={{
+              width: "90%",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <p>{header}</p>
+            <p>
+              <AddUser newUserPic={props.newUserPic} />
+            </p>
+          </div>
         </div>
       </Header>
       <Body {...props} ref={ref}>

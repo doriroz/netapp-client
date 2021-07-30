@@ -12,14 +12,14 @@ export function get(route) {
 //   );
 
 //post route
-export function post(route, msg) {
+export function post(route, newObj) {
   return fetch(APP_URL + route, {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(msg),
+    body: JSON.stringify(newObj),
   });
 }
 

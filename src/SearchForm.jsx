@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+const Utils = require("./utils.js");
 
 let Input = styled.input({
   //   overflow: "hidden",
@@ -9,6 +10,8 @@ let Input = styled.input({
   borderRadius: "50px",
   border: "none",
 });
+
+// input:focus{outline:"none"}
 
 let Form = styled.form({
   background: "#f4efef",
@@ -33,20 +36,18 @@ let Link = styled.a({
 });
 
 export function SearchForm(props) {
-  // const APP_URL = "https://netapp-server-doriroz.herokuapp.com/api/";
   const [foundUsers, setFoundUsers] = useState([]);
 
   function onChangeUser(e) {
     getUserBySearch(e);
   }
 
-  function get(route) {
-    // return fetch(APP_URL + route, {
-    return fetch("http://localhost:8080/api/" + route, {
-      credentials: "include",
-      mode: "cors",
-    }).then((response) => response.json());
-  }
+  // function get(route) {
+  //   return fetch("http://localhost:8080/api/" + route, {
+  //     credentials: "include",
+  //     mode: "cors",
+  //   }).then((response) => response.json());
+  // }
 
   function getUserBySearch(e) {
     if (!e.target.value) {
@@ -54,7 +55,7 @@ export function SearchForm(props) {
       return;
     }
 
-    return get("users?search=" + e.target.value).then((user) => {
+    return Utils.get("users?search=" + e.target.value).then((user) => {
       console.log(user);
       setFoundUsers(user);
     });
