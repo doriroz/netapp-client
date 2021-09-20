@@ -1,2 +1,2 @@
 # netapp-client
-netapp client site
+netapp is an instant messaging application. Application build with inspiretion of WhatsApp Web .  
